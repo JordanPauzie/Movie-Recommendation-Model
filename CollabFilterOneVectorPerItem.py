@@ -102,8 +102,8 @@ class CollabFilterOneVectorPerItem(AbstractBaseCollabFilterSGD):
         loss : float scalar
         ''' 
         user_id_N, item_id_N, y_N = data_tuple
-        yhat_N = self.predict(user_id_N, item_id_N, **param_dict)
-        loss_total = self.alpha * (ag_np.sum(param_dict["U"]** 2) + ag_np.sum(param_dict["V"] ** 2)) + ag_np.sum((y_N - yhat_N) ** 2)
+        yhat_N = self.predict(user_id_N, item_id_N, **param_dict) 
+        loss_total = self.alpha * (ag_np.sum(param_dict["U"] ** 2) + ag_np.sum(param_dict["V"] ** 2)) + ag_np.sum((y_N - yhat_N) ** 2)
 
         return loss_total    
 
@@ -116,8 +116,10 @@ if __name__ == '__main__':
     # to have right scale as the dataset (right num users and items)
     model = CollabFilterOneVectorPerItem(
         n_epochs=10, batch_size=10000, step_size=0.1,
-        n_factors=2, alpha=0.0)
+        n_factors=50, alpha=0.0)
     model.init_parameter_dict(n_users, n_items, train_tuple)
 
     # Fit the model with SGD
     model.fit(train_tuple, valid_tuple)
+
+
