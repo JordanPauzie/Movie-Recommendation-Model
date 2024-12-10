@@ -87,7 +87,6 @@ class CollabFilterOneVectorPerItem(AbstractBaseCollabFilterSGD):
 
         return mu + b_per_user[user_id_N] + c_per_item[item_id_N] + ag_np.sum(U[user_id_N] * V[item_id_N], axis = 1)
 
-
     def calc_loss_wrt_parameter_dict(self, param_dict, data_tuple):
         ''' Compute loss at given parameters
 
@@ -115,11 +114,14 @@ if __name__ == '__main__':
     # Create the model and initialize its parameters
     # to have right scale as the dataset (right num users and items)
     model = CollabFilterOneVectorPerItem(
-        n_epochs=10, batch_size=10000, step_size=0.1,
-        n_factors=50, alpha=0.0)
+        n_epochs=10, batch_size=50, step_size=0.1,
+        n_factors=10, alpha=0.001)
     model.init_parameter_dict(n_users, n_items, train_tuple)
 
     # Fit the model with SGD
     model.fit(train_tuple, valid_tuple)
-
-
+    test_user_id, test_item_id, true_ratings = test_tuple
+    predicted_ratings = model.predict(test_user_id, test_item_id)
+    test_mae = ag_np.mean(ag_np.abs(predicted_ratings - true_ratings))
+    print("final validation MAE: ", model.trace_mae_valid[-1])
+    print("test set MAE: ", test_mae)
